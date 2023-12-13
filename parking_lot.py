@@ -6,28 +6,33 @@ class ParkingLot:
         self.occupied_spots = {}  # {vehicle_number: (level, spot_number)}
 
     def assign_parking_spot(self, vehicle_number):
+        if vehicle_number in self.occupied_spots:
+            return {"message": "Vehicle is already parked"}
+        
         for level in self.levels:
             if self.parking_spots[level]:
-                spot_number = self.parking_spots[level].pop()
+                spot_number = min(self.parking_spots[level])
+                self.parking_spots[level].remove(spot_number)
                 self.occupied_spots[vehicle_number] = (level, spot_number)
                 return {"level": level, "spot": spot_number}
 
-        return {"message": "Parking lot is full"}
+        return {"Sorry the parking lot is full"}
+
 
     def retrieve_parking_spot(self, vehicle_number):
         if vehicle_number in self.occupied_spots:
             level, spot_number = self.occupied_spots[vehicle_number]
             return {"level": level, "spot": spot_number}
         else:
-            return {"message": "Vehicle not found"}
+            return {"Vehicle not found"}
 
     def unpark_vehicle(self, vehicle_number):
         if vehicle_number in self.occupied_spots:
             level, spot_number = self.occupied_spots.pop(vehicle_number)
             self.parking_spots[level].add(spot_number)
-            return {"message": "Vehicle unparked"}
+            return {"Vehicle unparked"}
         else:
-            return {"message": "Vehicle not found"}
+            return {"Vehicle not found"}
 
     def retrieve_nearest_parking_spot(self):
         for level in self.levels:
@@ -35,7 +40,7 @@ class ParkingLot:
                 spot_number = min(self.parking_spots[level])
                 return {"level": level, "spot": spot_number}
 
-        return {"message": "Parking lot is full"}
+        return {"Parking lot is full"}
 
 
 if __name__ == "__main__":
